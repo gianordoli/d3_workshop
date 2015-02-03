@@ -1,0 +1,43 @@
+* {
+	font-family: 'Lato', sans-serif !important;
+  -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+  -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+  box-sizing: border-box;         /* Opera/IE 8+ */;
+}
+
+body, html{
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+
+/*circle{
+  fill: red;
+}*/
+
+text{
+	fill: rgb(80, 80, 80);
+}
+
+text#tooltip{
+  font-weight: bold;
+  fill: black;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: rgb(80, 55, 150);
+  shape-rendering: crispEdges;
+}
+
+/*.x.axis path {
+  display: none;
+}*/
+
+.x.axis text,
+.y.axis text{
+  font-size: 0.6em;
+}

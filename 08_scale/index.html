@@ -16,16 +16,18 @@
                     console.log(data);   //Log the data.
                     drawChart(data);
                 }
+                
             });
 
-            function drawChart(dataset){
+            // Let's keep layout vars global
+            // Let's define some margins first, so we have space to draw our axes.
+            // Take a look into Mike Bostock's margin conventions:
+            // http://bl.ocks.org/mbostock/3019563
+            var margin = {top: 100, right: 100, bottom: 100, left: 100};
+            var width  = window.innerWidth - margin.left - margin.right;
+            var height = window.innerHeight - margin.top - margin.bottom;
 
-                // Let's define some margins first, so we have space to draw our axes.
-                // Take a look into Mike Bostock's margin conventions:
-                // http://bl.ocks.org/mbostock/3019563
-                var margin = {top: 100, right: 50, bottom: 100, left: 50};
-                var width  = window.innerWidth - margin.left - margin.right;
-                var height = window.innerHeight - margin.top - margin.bottom;
+            function drawChart(dataset){
 
                 // var xScale = d3.scale.linear()
                 var xScale = d3.scale.log()

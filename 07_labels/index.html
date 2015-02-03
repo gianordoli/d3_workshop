@@ -18,10 +18,11 @@
                 }
             });
 
-            function drawChart(dataset){
+            // Let's keep layout vars global
+            var width = window.innerWidth;
+            var height = window.innerHeight;            
 
-                var width = window.innerWidth;
-                var height = window.innerHeight;
+            function drawChart(dataset){
 
                 // This is a sort of canvas. All the elements from our chart
                 //  will be placed inside this one svg element

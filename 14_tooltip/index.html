@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>D3 Workshop - Parsons MFA DT</title>
+        <link href='http://fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>      
+        <link rel="stylesheet" href="css/styles.css">        
+        <script type="text/javascript" src="../d3/d3.min.js"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+
+            d3.json("data/gapminder_life_expectancy_gdp_2012.json", function(error, data) {
+
+                if (error){
+                    console.log(error);  // Error?    
+                }else{
+                    console.log(data);   //Log the data.
+                    drawChart(data);
+
+                    // Adding a click event to the body
+                    d3.select("body").on("click", function(){
+
+                        // This is javaScript, not d3!
+                        data.forEach(function(d, i, list){
+                            // console.log(d);
+                            // We don't have a real set to update,
+                            // so I'm gonna throw some random numbers here
+                            d.gdp = Math.round(Math.random()*9000);
+                            d.life_expectancy = Math.round(Math.random()*80);
+                        });
+                        console.log(data);
+
+                        drawChart(data, true);
+                        // I made up this 'update' variable (true)! Not a d3 thing!
+                        // I'm gonna put everything under the same function,
+                        // and differentiate draw and update based on this variable.
+                        // The reason is: I didn't make the
+                        // layout variables (margin, axes, etc) global,
+                        // and I'm gonna need them again.
+                    });                    
+                }
+            });
+
+            // Let's keep layout vars global
+            // Let's define some margins first, so we have space to draw our axes.
+            // Take a look into Mike Bostock's margin conventions:
+            // http://bl.ocks.org/mbostock/3019563
+            var margin = {top: 100, right: 100, bottom: 100, left: 100};
+            var width  = window.innerWidth - margin.left - margin.right;
+            var height = window.innerHeight - margin.top - margin.bottom;               
+
+            function drawChart(dataset, update){
+
+                // var xScale = d3.scale.linear()
+                var xScale = d3.scale.log()
+                               .domain([                            // INPUT
+                                    d3.min(dataset, function(d, i){ // Scatterplots don't need
+                                        return d.gdp;               // to start at 0!   
+                                    }),
+                                    d3.max(dataset, function(d, i){
+                                        return d.gdp;
+                                    })
+                                ])
+                               .range([0, width]);                  // OUTPUT
+
+                var yScale = d3.scale.linear()
+                               .domain([                            // INPUT
+                                    d3.min(dataset, function(d, i){ // Scatterplots don't need
+                                        return d.life_expectancy;   // to start at 0!   
+                                    }),
+                                    d3.max(dataset, function(d, i){
+                                        return d.life_expectancy;
+                                    })
+                                ])
+                               .range([height, 0]);                  // OUTPUT
+                                // The y scale should be backwards, right? 
+
+                // Creating the axes. Nothing is being drawn so far!
+                var xAxis = d3.svg.axis()
+                                  .scale(xScale)
+                                  .orient("bottom")
+                                  .tickFormat(d3.format("g"));
+                                  // For more options on axes, see:
+                                  // https://github.com/mbostock/d3/wiki/SVG-Axes
+                                  // And for more info about formatting:
+                                  // https://github.com/mbostock/d3/wiki/Formatting
+
+                var yAxis = d3.svg.axis()
+                                  .scale(yScale)
+                                  .orient("left");   
+
+                // First call
+                if(!update){
+
+                    // This is a sort of canvas. All the elements from our chart
+                    //  will be placed inside this one svg element
+                    var svg = d3.select("body")
+                                .append("svg")
+                                .attr("width", window.innerWidth)
+                                .attr("height", window.innerHeight);
+
+                    // Now the whole chart will be inside a group
+                    var chart = svg.append("g")
+                                   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+                    // Now appending the axes
+                    chart.append("g")
+                        .attr("transform", "translate(0," + height + ")")
+                        .attr("class", "x axis")
+                        .call(xAxis)
+                        .append("text") // Label
+                        .attr("x", width)
+                        .attr("y", -6)
+                        .style("text-anchor", "end")
+                        .text("Income per person (GDP/capita, PPP$ inflation-adjusted)");
+
+                    chart.append("g")
+                        .attr("class", "y axis")
+                        .call(yAxis)
+                        .append("text") // Label
+                        .attr("transform", "rotate(-90)")
+                        .attr("y", 12)
+                        .style("text-anchor", "end")
+                        .text("Life Expectancy (years)");;
+
+                    // Creating the circles
+                    chart.selectAll("circle")
+                        .data(dataset)
+                        .enter()
+                        .append("circle")
+                        .attr("r", 10)
+                        .attr("fill", "rgba(0, 140, 200, 0.3)")
+
+                        // Interaction
+                        .on("mouseover", function(d, i) {
+                            d3.select(this)
+                              .attr("fill", "red");
+
+                            // Tooltip
+                            var tooltipX = parseFloat(d3.select(this).attr("cx")) + 10;
+                            var tooltipY = parseFloat(d3.select(this).attr("cy")) + 10;
+
+                            chart.append("text")
+                                .attr("x", tooltipX)
+                                .attr("y", tooltipY)
+                                .text(d.country)
+                                .attr("id", "tooltip")
+                                .append("tspan")
+                                .attr("x", tooltipX)
+                                .attr("dy", 20)
+                                .text(d.life_expectancy + " years")
+                                .append("tspan")
+                                .attr("x", tooltipX)
+                                .attr("dy", 20)
+                                .text("GDP " + d.gdp);
+
+
+                        })
+                        .on("mouseout", function(d) {
+                                d3.select(this)
+                                  .attr("fill", "rgba(0, 140, 200, 0.3)");
+                                
+                                //Remove the tooltip
+                                d3.select("#tooltip").remove();                                  
+                        })                          
+
+                        // Initial state
+                        .attr("cx", function(d, i){
+                            return xScale(d.gdp)
+                        })
+                        .attr("cy", height)
+                        .style("opacity", 0)
+                        
+                        // Transition
+                        .transition()
+                        .duration(2000)
+
+                        // Final state
+                        .attr("cx", function(d, i){ // Attention here! cx and cy
+                            return xScale(d.gdp);   // Easy!
+                        })
+                        .attr("cy", function(d, i){
+                            return yScale(d.life_expectancy)
+                        })
+                        .style("opacity", 1);   // This is css, not d3!
+                
+                // Update
+                }else{
+                    console.log("Updating data...");
+
+                    // Select the section we want to apply our changes to
+                    var svg = d3.select("svg")
+                                 .transition()
+                                 .duration(2000);
+                                 // I'm gonna apply the transition to all elements at once 
+
+                    // Transitioning the scales
+                    svg.select(".x.axis") // change the x axis
+                        .call(xAxis);
+
+                    svg.select(".y.axis") // change the y axis
+                        .call(yAxis); 
+
+                    svg.selectAll("circle")
+                        .attr("cx", function(d, i){ // Attention here! cx and cy
+                            return xScale(d.gdp);   // Easy!
+                        })
+                        .attr("cy", function(d, i){
+                            return yScale(d.life_expectancy)
+                        })                    
+
+                }
+
+            }
+
+        </script>
+    </body>
+</html>

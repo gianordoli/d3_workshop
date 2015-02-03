@@ -3,6 +3,8 @@
     <head>
         <meta charset="utf-8">
         <title>D3 Workshop - Parsons MFA DT</title>
+        <link href='http://fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>      
+        <link rel="stylesheet" href="css/styles.css">        
         <script type="text/javascript" src="../d3/d3.min.js"></script>
     </head>
     <body>
@@ -13,7 +15,7 @@
                 if (error){
                     console.log(error);  // Error?    
                 }else{
-                    console.log(data);   //Log the data.
+                    // console.log(data);   //Log the data.
                     drawChart(data);
                 }
             });
@@ -64,7 +66,7 @@
 
                 var yAxis = d3.svg.axis()
                                   .scale(yScale)
-                                  .orient("left");                                
+                                  .orient("left");
 
                 // This is a sort of canvas. All the elements from our chart
                 //  will be placed inside this one svg element
@@ -79,27 +81,54 @@
 
                 // Now appending the axes
                 chart.append("g")
-                   .attr("transform", "translate(0," + height + ")")
-                   .call(xAxis);
+                    .attr("transform", "translate(0," + height + ")")
+                    .attr("class", "x axis")
+                    .call(xAxis)
+                    .append("text") // Label
+                    .attr("x", width)
+                    .attr("y", -6)
+                    .style("text-anchor", "end")
+                    .text("Income per person (GDP/capita, PPP$ inflation-adjusted)");
 
                 chart.append("g")
-                     .call(yAxis);
+                    .attr("class", "y axis")
+                    .call(yAxis)
+                    .append("text") // Label
+                    .attr("transform", "rotate(-90)")
+                    .attr("y", 12)
+                    .style("text-anchor", "end")
+                    .text("Life Expectancy (years)");;
 
                 // Creating the circles
                 chart.selectAll("circle")
                     .data(dataset)
                     .enter()
                     .append("circle")
+                    .attr("r", 10)
+                    .attr("fill", "rgba(0, 140, 200, 0.5)")
+
+                    // Initial state
+                    .attr("cx", function(d, i){
+                        return xScale(d.gdp)
+                    })
+                    .attr("cy", height)
+                    .style("opacity", 0)
+                    
+                    // Transition
+                    .transition()
+                    .duration(2000)
+
+                    // Final state
                     .attr("cx", function(d, i){ // Attention here! cx and cy
                         return xScale(d.gdp);   // Easy!
                     })
                     .attr("cy", function(d, i){
-                        return yScale(d.life_expectancy);
+                        return yScale(d.life_expectancy)
                     })
-                    .attr("r", 10)
-                    .attr("fill", "rgba(0, 140, 200, 0.5)");
+                    .style("opacity", 1);   // This is css, not d3!
 
             }
+
 
         </script>
     </body>
