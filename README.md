@@ -13,4 +13,11 @@ Data was downloaded from [Gapminder](http://www.gapminder.org/):
 * [Geographic Regions](https://spreadsheets.google.com/pub?key=phT4mwjvEuGBtdf1ZeO7_PQ&gid=1
 )
 
+Some useful links:
+
+* [SVG attributes](http://www.w3schools.com/svg/svg_reference.asp)
+* [Mr. Data Converter](http://shancarter.github.io/mr-data-converter/)
+* [D3 deconstructor](http://ucbvislab.github.io/d3-deconstructor/)
+* [SVG Crowbar](http://nytimes.github.io/svg-crowbar/)
+
 February 7th, 2015
