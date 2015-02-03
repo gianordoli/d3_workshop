@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>D3 Workshop - Parsons MFA DT</title>
+        <script type="text/javascript" src="../d3/d3.min.js"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+
+            d3.json("data/gapminder_life_expectancy_gdp_2012.json", function(error, data) {
+
+                if (error){
+                    console.log(error);  // Error?    
+                }else{
+                    console.log(data);   //Log the data.
+                    drawChart(data);
+                }
+            });
+
+            function drawChart(dataset){
+
+                var width = window.innerWidth;
+                var height = window.innerHeight;
+
+                // This is a sort of canvas. All the elements from our chart
+                //  will be placed inside this one svg element
+                var svg = d3.select("body")
+                            .append("svg")
+                            .attr("width", width)
+                            .attr("height", height);
+
+                // Creating the circles
+                svg.selectAll("circle")
+                    .data(dataset)
+                    .enter()
+                    .append("circle")
+                    .attr("cx", function(d, i){ // Attention here! cx and cy
+                        return d.gdp/100;
+                    })
+                    .attr("cy", function(d, i){
+                        return height - d.life_expectancy*5;
+                    })
+                    .attr("r", 10)
+                    .attr("fill", "red");
+            }
+
+        </script>
+    </body>
+</html>

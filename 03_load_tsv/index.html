@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>D3 Workshop - Parsons MFA DT</title>
+        <script type="text/javascript" src="../d3/d3.min.js"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+
+            d3.tsv("data/gapminder_life_expectancy_gdp_2012.tsv", function(error, data) {
+
+                if (error){
+                    console.log(error);  // Error?    
+                }else{
+                    console.log(data);   //Log the data.    
+                }
+            });
+
+        </script>
+    </body>
+</html>
